@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDP Performance Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Sam's Club Color Palette */
+            --primary: #0062AD;
+            --secondary: #00358E;
+            --tertiary: #11224B;
+            --accent1: #35C4EC;
+            --accent2: #97EAFF;
+            --accent3: #42DFE0;
+            --accent4: #1D4B6D;
+            --neutral1: #7C878E;
+            --neutral2: #D0D3D4;
+            --white: #FFFFFF;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--white);
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: var(--tertiary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--white);
+        }
+
+        .refresh-btn {
+            background: var(--white);
+            color: var(--tertiary);
+            border: 2px solid var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--accent1);
+            border-color: var(--accent1);
+            color: var(--tertiary);
+            transform: translateY(-1px);
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--light);
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--neutral2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: var(--tertiary);
+            font-size: 0.9rem;
+        }
+
+        .control-select, .control-input {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--neutral2);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            background: white;
+            min-width: 150px;
+        }
+
+        .control-select:focus, .control-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 98, 173, 0.1);
+        }
+
+        .mode-badge {
+            background: var(--accent1);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 1rem;
+        }
+
+        /* Comparison Picker */
+        .comparison-picker {
+            background: var(--light);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--neutral2);
+            display: none;
+        }
+
+        .picker-row {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Tiles Grid */
+        .tiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tile {
+            background: var(--white);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .tile:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 35px rgba(0,0,0,0.1);
+        }
+
+        .tile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .tile-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--neutral1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tile-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .tile-subtitle {
+            font-size: 0.9rem;
+            color: var(--neutral1);
+        }
+
+        .score-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .score-high { background: var(--success); color: white; }
+        .score-medium { background: var(--warning); color: white; }
+        .score-low { background: var(--danger); color: white; }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: var(--white);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--tertiary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .chart-canvas {
+            max-height: 300px;
+        }
+
+        /* Table */
+        .table-section {
+            background: var(--white);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--tertiary);
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--neutral2);
+        }
+
+        .data-table th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--tertiary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .data-table th:hover {
+            background: var(--neutral2);
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--light);
+        }
+
+        .expandable-row {
+            cursor: pointer;
+        }
+
+        .expanded-content {
+            background: var(--light);
+            padding: 1rem;
+        }
+
+        /* Utilities */
+        .hidden { display: none; }
+        .text-center { text-align: center; }
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-success { color: var(--success); }
+        .text-warning { color: var(--warning); }
+        .text-danger { color: var(--danger); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tiles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sam's Club Footer */
+        .sams-footer {
+            background: var(--tertiary);
+            padding: 2rem;
+            margin-top: 3rem;
+            color: var(--white);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .footer-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .footer-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .export-options {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .export-label {
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .export-btn {
+            background: var(--white);
+            color: var(--primary);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn:hover {
+            background: var(--accent1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            .export-options {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <img src="SC_Logo_Symbol_RGB_WHT.png" alt="Sam's Club" class="logo">
+            <h1 class="header-title">MDP Performance Dashboard</h1>
+        </div>
+        <div class="header-right">
+            <span id="lastUpdated">Last updated: Loading...</span>
+            <button class="refresh-btn" onclick="dashboard.refresh()">Refresh</button>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-group">
+            <label class="control-label">View:</label>
+            <select id="modeSelect" class="control-select">
+                <option value="cohort">Cohort</option>
+                <option value="compare">Comparison</option>
+                <option disabled>────────</option>
+                <!-- MDP names will be populated here -->
+            </select>
+            <span id="modeBadge" class="mode-badge">Cohort</span>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Function:</label>
+            <select id="functionFilter" class="control-select">
+                <option value="">All Functions</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Manager:</label>
+            <select id="managerFilter" class="control-select">
+                <option value="">All Managers</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Rotation:</label>
+            <select id="rotationFilter" class="control-select">
+                <option value="">All Rotations</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Search:</label>
+            <input type="text" id="searchFilter" class="control-input" placeholder="Search MDPs...">
+        </div>
+
+        <div class="control-group">
+            <button class="refresh-btn" onclick="dashboard.clearFilters()" style="background: var(--neutral1); color: var(--white);">Clear Filters</button>
+        </div>
+    </div>
+
+    <!-- Comparison Picker -->
+    <div id="comparisonPicker" class="comparison-picker">
+        <div class="picker-row">
+            <div class="control-group">
+                <label class="control-label">MDP A:</label>
+                <select id="mdpA" class="control-select">
+                    <option value="">Select MDP A...</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">MDP B:</label>
+                <select id="mdpB" class="control-select">
+                    <option value="">Select MDP B...</option>
+                </select>
+            </div>
+            <button class="refresh-btn" onclick="dashboard.swapMdps()" title="Swap A and B">A↔B</button>
+            <button class="refresh-btn" onclick="dashboard.clearComparison()" style="background: var(--neutral1);">Clear</button>
+        </div>
+    </div>
+
+    <!-- Dynamic Summary -->
+    <div id="dynamicSummary" style="background: var(--light); padding: 1rem 2rem; border-bottom: 1px solid var(--neutral2); font-size: 0.9rem; color: var(--tertiary);">
+        Loading summary...
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- KPI Tiles -->
+        <div id="tilesGrid" class="tiles-grid">
+            <!-- Tiles will be populated here -->
+        </div>
+
+        <!-- Charts -->
+        <div id="chartsGrid" class="charts-grid">
+            <!-- Charts will be populated here -->
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3 id="tableTitle" class="table-title">Performance Overview</h3>
+                <div class="table-controls">
+                    <label class="control-group" id="deltaToggle" style="display: none;">
+                        <input type="checkbox" id="significantDelta">
+                        <span class="control-label">Show only significant deltas (≥0.30)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead id="tableHead">
+                        <!-- Headers will be populated here -->
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sam's Club Branded Footer with Export Options -->
+    <footer class="sams-footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <img src="SC_Logo_Symbol_RGB_WHT.png" alt="Sam's Club" class="footer-logo">
+                <div class="footer-text">
+                    <span class="footer-title">MDP Performance Dashboard</span>
+                    <span class="footer-subtitle">People Operations Strategy & Transformation</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="export-options">
+                    <span class="export-label">Export Page:</span>
+                    <button class="export-btn csv-export" onclick="dashboard.exportCSV()">
+                        📊 CSV
+                    </button>
+                    <button class="export-btn pdf-export" onclick="dashboard.exportPDF()">
+                        📄 PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="dashboard-redesign.js"></script>
+</body>
+</html>

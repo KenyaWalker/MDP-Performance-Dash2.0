@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Response Manager - Sam's Club</title>
+    <style>
+        :root {
+            /* Sam's Club Color Palette */
+            --primary: #0062AD;
+            --secondary: #00358E;
+            --tertiary: #11224B;
+            --accent1: #35C4EC;
+            --accent2: #97EAFF;
+            --accent3: #42DFE0;
+            --accent4: #1D4B6D;
+            --neutral1: #7C878E;
+            --neutral2: #D0D3D4;
+            --white: #FFFFFF;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--white);
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: var(--tertiary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--white);
+        }
+
+        .export-btn, .refresh-btn {
+            background: var(--white);
+            color: var(--tertiary);
+            border: 2px solid var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn:hover, .refresh-btn:hover {
+            background: var(--accent1);
+            border-color: var(--accent1);
+            color: var(--tertiary);
+            transform: translateY(-1px);
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--light);
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--neutral2);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .control-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--tertiary);
+        }
+
+        .control-select, .control-input {
+            padding: 0.5rem;
+            border: 1px solid var(--neutral2);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            min-width: 150px;
+        }
+
+        .control-select:focus, .control-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 2rem;
+            border-bottom: 1px solid var(--neutral2);
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--neutral1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Table */
+        .table-container {
+            margin: 2rem;
+            background: var(--white);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 0.25rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-export {
+            background: var(--accent1);
+            color: var(--tertiary);
+        }
+
+        .btn-export:hover {
+            background: var(--accent2);
+        }
+
+        .responses-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .responses-table th,
+        .responses-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--neutral2);
+        }
+
+        .responses-table th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--tertiary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .responses-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .score-excellent { background: var(--success); }
+        .score-good { background: var(--primary); }
+        .score-fair { background: var(--warning); color: #333; }
+        .score-poor { background: var(--danger); }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: var(--white);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 1rem 1rem 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .close {
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .response-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--tertiary);
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent1);
+            padding-bottom: 0.25rem;
+        }
+
+        .question-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 0.5rem;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-answer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .answer-score {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats-bar {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .table-container {
+                margin: 1rem;
+                overflow-x: auto;
+            }
+
+            .responses-table {
+                min-width: 600px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--neutral1);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--neutral1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <img src="SC_Logo_Symbol_RGB_WHT.png" alt="Sam's Club" class="logo">
+            <h1 class="header-title">Survey Response Manager</h1>
+        </div>
+        <div class="header-right">
+            <span id="lastUpdated">Last updated: --</span>
+            <button class="refresh-btn" onclick="loadResponses()">
+                🔄 Refresh
+            </button>
+            <button class="export-btn" onclick="exportAllResponses()">
+                📥 Export All
+            </button>
+        </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-group">
+            <label class="control-label">MDP:</label>
+            <select id="mdpFilter" class="control-select">
+                <option value="">All MDPs</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Function:</label>
+            <select id="functionFilter" class="control-select">
+                <option value="">All Functions</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Manager:</label>
+            <select id="managerFilter" class="control-select">
+                <option value="">All Managers</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Rotation:</label>
+            <select id="rotationFilter" class="control-select">
+                <option value="">All Rotations</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Search:</label>
+            <input type="text" id="searchFilter" class="control-input" placeholder="Search responses...">
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value" id="totalResponses">--</div>
+            <div class="stat-label">Total Responses</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="uniqueMdps">--</div>
+            <div class="stat-label">Unique MDPs</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="avgScore">--</div>
+            <div class="stat-label">Average Score</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="latestRotation">--</div>
+            <div class="stat-label">Latest Rotation</div>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2 class="table-title">Survey Responses</h2>
+            <div class="table-actions">
+                <button class="btn-small btn-export" onclick="exportFilteredResponses()">Export Filtered</button>
+            </div>
+        </div>
+        <div id="tableContent">
+            <div class="loading">Loading responses...</div>
+        </div>
+    </div>
+
+    <!-- Response Detail Modal -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Response Details</h2>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Response details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

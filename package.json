@@ -1,0 +1,27 @@
+{
+  "name": "mdp-performance-dashboard",
+  "version": "1.0.0",
+  "description": "MDP Performance Dashboard with Survey and Analytics",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "cd server && nodemon index.js",
+    "install-server": "cd server && npm install",
+    "postinstall": "npm run install-server",
+    "railway:deploy": "railway up"
+  },
+  "keywords": [
+    "mdp",
+    "performance",
+    "dashboard",
+    "survey"
+  ],
+  "author": "Sam's Club",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4"
+  }
+}

@@ -1,0 +1,6 @@
+version: 2
+build:
+  commands:
+    - npm install
+    - cd server && npm install
+start: npm start

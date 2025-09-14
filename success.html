@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Submitted - Sam's Club</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #004990 0%, #0066cc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 4rem 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #004990, #0066cc, #35C4EC);
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #22c55e;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .success-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #004990;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .success-message {
+            font-size: 1.3rem;
+            color: #374151;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .close-instruction {
+            font-size: 0.95rem;
+            color: #9ca3af;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #004990;
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 3rem 2rem;
+                margin: 1rem;
+            }
+
+            .success-title {
+                font-size: 2rem;
+            }
+
+            .success-message {
+                font-size: 1.1rem;
+            }
+
+            .logo {
+                width: 100px;
+            }
+        }
+
+        /* Subtle animation */
+        .success-container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            animation: bounceIn 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <img src="SC_Logo_Symbol_RGB_WHT.png" alt="Sam's Club" class="logo" style="filter: brightness(0) saturate(100%) invert(13%) sepia(91%) saturate(2588%) hue-rotate(205deg) brightness(95%) contrast(101%);">
+        
+        <div class="success-icon">✓</div>
+        
+        <h1 class="success-title">Survey Submitted Successfully!</h1>
+        
+        <p class="success-message">Thank you for your evaluation!</p>
+        
+        <p class="subtitle">Your feedback helps us improve the Merchandising Development Program experience.</p>
+        
+        <div class="close-instruction">
+            You may now close this page or browser tab.
+        </div>
+    </div>
+</body>
+</html>

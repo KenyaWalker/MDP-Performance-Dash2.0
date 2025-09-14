@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDP Evaluation Survey - Sam's Club</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #004990 0%, #0066cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #222;
+        }
+
+        .survey-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .survey-header {
+            background: #004990;
+            color: white;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .survey-header .logo {
+            flex-shrink: 0;
+        }
+
+        .survey-header .title-section {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .survey-header h1 {
+            font-size: 2.25rem;
+            margin-bottom: 6px;
+            line-height: 1.2;
+            font-weight: 600;
+        }
+
+        .survey-header p {
+            font-size: 1.15rem;
+            opacity: 0.95;
+            margin-top: 0.5rem;
+        }
+
+        .survey-form {
+            padding: 40px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section h2 {
+            color: #004990;
+            font-size: 1.75rem;
+            margin: 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e5e5;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            transition: all 0.2s ease;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #004990;
+        }
+
+        .form-group select option:disabled {
+            color: #999 !important;
+            font-style: italic;
+            background-color: #f5f5f5;
+        }
+
+        .question-group {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #004990;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-weight: 700;
+            color: #1f2937;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.3rem;
+            line-height: 1.4;
+            letter-spacing: -0.2px;
+        }
+
+        .question-meta {
+            font-size: 1rem;
+            color: #4b5563;
+            margin: 0 0 1.5rem;
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .rating-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            padding: 10px 5px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
+        }
+
+        .rating-option:hover {
+            background: #e3f2fd;
+        }
+
+        .rating-option input[type="radio"] {
+            margin-bottom: 8px;
+            transform: scale(1.3);
+            cursor: pointer;
+        }
+
+        .rating-option label {
+            font-size: 0.95rem;
+            text-align: center;
+            color: #374151;
+            line-height: 1.2;
+            font-weight: 500;
+            cursor: pointer;
+            max-width: 100px;
+            transition: color 0.2s ease;
+        }
+
+        .rating-option input[type="radio"]:checked + label {
+            color: #004990;
+            font-weight: 600;
+            text-shadow: 0 0 1px rgba(0,73,144,0.2);
+        }
+
+        .submit-section {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .submit-btn {
+            background: #004990;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #003366;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .required {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .survey-form {
+                padding: 20px;
+            }
+
+            .survey-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .survey-header .title-section {
+                position: static;
+                transform: none;
+                text-align: center;
+            }
+            
+            .rating-scale {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .rating-option {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                padding: 10px;
+                background: white;
+                border-radius: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Survey Form -->
+    <div id="surveyContainer" class="survey-container">
+        <div class="survey-header">
+            <div class="logo">
+                <img src="SC_Logo_Symbol_RGB_WHT.png" alt="Sam's Club" style="height: 70px;">
+            </div>
+            <div class="title-section">
+                <h1>MDP Evaluation Survey</h1>
+                <p>Merchandising Development Program Assessment</p>
+            </div>
+        </div>
+
+        <form class="survey-form" id="surveyForm">
+            <div id="successMessage" class="success-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+
+            <div class="form-section">
+                <h2>Participant Information</h2>
+                
+                <div class="form-group">
+                    <label for="mdpName">MDP Name <span class="required">*</span></label>
+                    <select id="mdpName" name="mdpName" required onchange="checkNextRotation()">
+                        <option value="">Select MDP</option>
+                        <option value="Devin Turner">Devin Turner</option>
+                        <option value="Evan Shanks">Evan Shanks</option>
+                        <option value="Gracie Bailey">Gracie Bailey</option>
+                        <option value="Kate Walker">Kate Walker</option>
+                        <option value="Gabe Bailey">Gabe Bailey</option>
+                        <option value="Khera Hunter">Khera Hunter</option>
+                        <option value="Madeline Kimbel">Madeline Kimbel</option>
+                        <option value="Rebecca Garcia">Rebecca Garcia</option>
+                        <option value="Ryan Thomas">Ryan Thomas</option>
+                    </select>
+                    <div id="rotationInfo" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: #e3f2fd; border-radius: 4px; font-size: 0.9rem; color: #1976d2;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="functionName">Function <span class="required">*</span></label>
+                    <select id="functionName" name="functionName" required>
+                        <option value="">Select Function</option>
+                        <option value="Planning">Planning</option>
+                        <option value="Digital Merch">Digital Merchandising</option>
+                        <option value="Replenishment">Replenishment</option>
+                        <option value="Member's Mark">Member's Mark</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="manager">Your Name <span class="required">*</span></label>
+                    <input type="text" id="manager" name="manager" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Performance Evaluation</h2>
+                <div id="questionsContainer">
+                    <!-- Questions will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <div class="email-option" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #004990;">
+                    <label style="display: flex; align-items: center; cursor: pointer; font-weight: 500; color: #333;">
+                        <input type="checkbox" id="emailResponse" style="margin-right: 10px; transform: scale(1.2);">
+                        Email me a copy of my responses
+                    </label>
+                    <div id="emailInput" style="display: none; margin-top: 10px;">
+                        <input type="email" id="respondentEmail" placeholder="Enter your email address" 
+                               style="width: 100%; max-width: 300px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Evaluation</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="survey.js"></script>
+</body>
+</html>
