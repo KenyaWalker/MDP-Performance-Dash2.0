@@ -1,6 +1,9 @@
 // MDP Performance Dashboard - Redesigned
 // Maintains existing API endpoints while implementing new UI architecture
 
+// API endpoint for live data
+const API_BASE = window.location.origin;
+
 class MDPDashboard {
     constructor() {
         this.data = [];
@@ -43,7 +46,7 @@ class MDPDashboard {
 
     async loadData() {
         try {
-            const response = await fetch('/api/survey-responses');
+            const response = await fetch(`${API_BASE}/api/survey-responses`);
             if (!response.ok) throw new Error('Failed to fetch data');
             
             const rawData = await response.json();
